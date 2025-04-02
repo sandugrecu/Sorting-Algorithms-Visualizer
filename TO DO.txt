@@ -1,0 +1,2 @@
+De adaugat mai multi algoritmi.
+De facut in timpul iteratiilor sa se coloreze patratul selectat cu verde.
