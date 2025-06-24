@@ -1,8 +1,3 @@
-#TO DO
-# userul sa introduca lista de la tastatura
-# mai multe setari pentru utilizator
-#UI imbunatatit
-
 import tkinter as tk
 from tkinter import ttk
 import time 
@@ -11,7 +6,7 @@ import threading
 class SortVisualizer:
     def __init__(self, window, userList):
         self.window = window
-        self.window.title("Vizualizare sortari")
+        self.window.title("Sorting visualization")
         self.window.geometry("600x600")
 
         self.listaNesortata = userList
@@ -24,7 +19,7 @@ class SortVisualizer:
     #Metoda care creeaza UI-ul
     def create_widgets(self):
         # Descrierea aplicației
-        descrierea = ttk.Label(self.window, text="Aplicatie de vizualizarea a algoritmilor de sortare. ")
+        descrierea = ttk.Label(self.window, text="Sorting Algorithms Visualization App.")
         descrierea.pack()
 
         # Canvas pentru vizualizarea listei
@@ -33,7 +28,7 @@ class SortVisualizer:
 
         #Afisarea numarului de iteratii
         self.numarIteratii = tk.StringVar()
-        self.numarIteratii.set("Numar iteratii: 0")
+        self.numarIteratii.set("Number of iterations: 0")
         numarIteratiiLabel = tk.Label(self.window, textvariable = self.numarIteratii)
         numarIteratiiLabel.pack()
 
@@ -69,7 +64,7 @@ class SortVisualizer:
         listFrame = tk.Frame(self.window)
         listFrame.pack()
 
-        listInputLabel = tk.Label(listFrame, text="Introdu lista: ")
+        listInputLabel = tk.Label(listFrame, text="Insert numbers (5, 2, 3): ")
         listInputLabel.pack(side='left')
 
         self.inputList = tk.Entry(listFrame)
@@ -94,8 +89,9 @@ class SortVisualizer:
         self.list_visualization(self.listaNesortata)
 
     #Functia pentru vizualizarea unei liste
-    def list_visualization(self, lista):
+    def list_visualization(self, lista, a=9999, b=999999):
         self.canvas.delete("all")  
+        color = "blue"
 
         nrPatrate = len(lista)
         latimea = 350 / nrPatrate * 0.95
@@ -103,7 +99,10 @@ class SortVisualizer:
         inaltimeUnitate = 300 / max(lista) * 0.95
 
         for i, j in enumerate(lista):
-            self.canvas.create_rectangle(i * latimea + (i + 1) * gap, 300 - lista[i] * inaltimeUnitate, (i + 1) * latimea + i * gap, 300, fill="blue")
+            if (i == b) or (i == a):
+                color = "green" #Daca suntem pe patratul care il controlam in coloram in verde
+            self.canvas.create_rectangle(i * latimea + (i + 1) * gap, 300 - lista[i] * inaltimeUnitate, (i + 1) * latimea + i * gap, 300, fill=color)
+            color = "blue"
 
     #Algoritmul bubble sort 
     def bubble_sort_ascending(self, listaNesortata):
@@ -118,11 +117,15 @@ class SortVisualizer:
             swapped = False
             for i in range(n - 1 - j):
                 if lista[i] > lista[i + 1]:
+                    #vizualizam lista inainte de shimbari (coloral elementele colorate cu verde)
+                    self.list_visualization(lista, i, i+1)
+                    time.sleep(delay)
+
                     lista[i], lista[i + 1] = lista[i + 1], lista[i]
                     swapped = True
 
                     #vizualizam lista si actualizam nr de iteratii
-                    self.list_visualization(lista)
+                    self.list_visualization(lista, i, i+1)
                     iteratii += 1
                     self.numarIteratii.set(f"Numar iteratii: {iteratii}")
                     time.sleep(delay)
@@ -149,8 +152,16 @@ class SortVisualizer:
             for j in range(i+1, n):
                 if lista[j] < lista[minimIndex]:
                     minimIndex = j
+
+                self.list_visualization(lista, i, minimIndex)
+                time.sleep(delay)
+                
             lista[i], lista[minimIndex] = lista[minimIndex], lista[i]
             iteratii += 1
+
+            self.list_visualization(lista, i, minimIndex)
+            iteratii += 1
+
             self.numarIteratii.set(f"Numar iteratii: {iteratii}")
             self.list_visualization(lista)
             time.sleep(delay)
@@ -171,17 +182,21 @@ class SortVisualizer:
         for i in range(1, n):
             key = lista[i]
             j = i - 1
+
+            self.list_visualization(lista, i, j)
+            time.sleep(delay)
+
             while j >= 0 and lista[j] > key:
                 lista[j + 1] = lista[j]
                 j -= 1
 
-                self.list_visualization(lista)  # Vizualizare pas cu pas
+                self.list_visualization(lista, i, j)  # Vizualizare pas cu pas
                 iteratii += 1
                 self.numarIteratii.set(f"Numar iteratii: {iteratii}")
                 time.sleep(delay)
 
             lista[j + 1] = key
-            self.list_visualization(lista)  # Vizualizare pas final pentru acest pas
+            self.list_visualization(lista, i, j+1)  # Vizualizare pas final pentru acest pas
             time.sleep(delay)
 
     def start_insertion_sort(self):
@@ -201,6 +216,7 @@ class SortVisualizer:
                 mid = (left + right) // 2
                 merge_sort(lista, left, mid)
                 merge_sort(lista, mid + 1, right)
+                
                 merge(lista, left, mid, right)
                 self.list_visualization(lista)
                 time.sleep(delay)
