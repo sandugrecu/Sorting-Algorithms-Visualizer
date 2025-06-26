@@ -38,10 +38,10 @@ A Python GUI app for visualizing how popular sorting algorithms work in real tim
 
 ```bash
 # Clone the repository
-git clone https://github.com/sandugrecu/sorting-visualizer
+git clone https://github.com/sandugrecu/Sorting-Algorithms-Visualizer
 
 # Navigate into the directory
-cd sorting-visualizer
+cd Sorting-Algorithms-Visualizer
 
 # Run the project
 python main.py
